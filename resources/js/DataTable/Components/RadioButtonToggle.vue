@@ -13,8 +13,8 @@ const props = withDefaults(
     }>(),
     {
         classes: "flex mb-3.5 sm:mb-0",
-        leftButtonLabel: "Да",
-        rightButtonLabel: "Не",
+        leftButtonLabel: "Yes",
+        rightButtonLabel: "No",
     }
 );
 

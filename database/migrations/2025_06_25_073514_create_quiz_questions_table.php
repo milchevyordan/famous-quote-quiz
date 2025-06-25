@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('quiz_questions', function (Blueprint $table) {
             $table->id();
+
+            $table
+                ->foreignId('creator_id')
+                ->constrained('users');
+
             $table->string('question');
             $table->boolean('is_binary')->default(true);
             $table->boolean('binary_correct_answer')->nullable();

@@ -2,11 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasChangeLogs;
 use Illuminate\Database\Eloquent\Model;
 
 class QuizQuestion extends Model
 {
-    /** @use HasFactory<\Database\Factories\QuizQuestionFactory> */
-    use HasFactory;
+    use HasChangeLogs;
+
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'question',
+        'is_binary',
+        'binary_correct_answer',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_binary' => 'boolean',
+        'binary_correct_answer' => 'boolean',
+    ];
 }

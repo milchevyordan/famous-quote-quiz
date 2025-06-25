@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Http\Requests\StoreQuizQuestionRequest;
 use App\Models\QuizQuestion;
 use App\Services\DataTable\DataTable;
 
@@ -69,17 +70,19 @@ class QuizQuestionService
     /**
      * Create the client.
      *
-     * @param array $validatedRequest
+     * @param StoreQuizQuestionRequest $request
      * @return self
      */
-    public function createQuizQuestion(array $validatedRequest): self
+    public function createQuizQuestion(StoreQuizQuestionRequest $request): self
     {
-        $client = new QuizQuestion();
-        $client->fill($validatedRequest);
-        $client->creator_id = auth()->id();
-        $client->save();
+        $validatedRequest = $request->validated();
 
-        $this->setQuizQuestion($client);
+        $quizQuestion = new QuizQuestion();
+        $quizQuestion->fill($validatedRequest);
+        $quizQuestion->creator_id = auth()->id();
+        $quizQuestion->save();
+
+        $this->setQuizQuestion($quizQuestion);
 
         return $this;
     }

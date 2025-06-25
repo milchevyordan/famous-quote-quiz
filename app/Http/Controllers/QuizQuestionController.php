@@ -7,8 +7,12 @@ use App\Http\Requests\UpdateQuizQuestionRequest;
 use App\Models\QuizQuestion;
 use App\Services\ChangeLogService;
 use App\Services\QuizQuestionService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class QuizQuestionController extends Controller
 {
@@ -42,9 +46,23 @@ class QuizQuestionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreQuizQuestionRequest $request)
+    public function store(StoreQuizQuestionRequest $request): RedirectResponse
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $this->service->createQuizQuestion($request);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Record successfully created.');
+        } catch (Throwable $th) {
+            DB::rollBack();
+
+            Log::error($th->getMessage(), ['exception' => $th]);
+
+            return redirect()->back()->withErrors(['Error creating record.']);
+        }
     }
 
     /**

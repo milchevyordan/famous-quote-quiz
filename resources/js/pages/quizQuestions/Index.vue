@@ -15,6 +15,7 @@ import AppLayout from "@/layouts/AppLayout.vue";
 import InputLabel from "@/components/InputLabel.vue";
 import TextInput from "@/components/TextInput.vue";
 import InputError from "@/components/InputError.vue";
+import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 
 defineProps<{
     dataTable: DataTable<User>;
@@ -71,14 +72,14 @@ const updateForm = useForm<QuizQuestionForm>(modelDefaults);
 const deleteForm = useForm<QuizQuestionForm>(modelDefaults);
 
 const store = () => {
-    storeForm.post(route("quiz.questions.store"), {
+    storeForm.post(route("quiz.question.store"), {
         preserveScroll: true,
     });
     closeCreateModal();
 };
 
 const update = () => {
-    updateForm.put(route("quiz.questions.update", updateForm.id as number), {
+    updateForm.put(route("quiz.question.update", updateForm.id as number), {
         preserveScroll: true,
         onSuccess: () => {
             closeUpdateModal();
@@ -89,7 +90,7 @@ const update = () => {
 };
 
 const handleDelete = () => {
-    deleteForm.delete(route("quiz.questions.destroy", deleteForm.id as number), {
+    deleteForm.delete(route("quiz.question.destroy", deleteForm.id as number), {
         preserveScroll: true,
     });
     closeDeleteModal();
@@ -197,17 +198,53 @@ const breadcrumbs: BreadcrumbItem[] = [
                     class="mt-1 block w-full mb-3.5"
                 />
 
-<!--                <InputError-->
-<!--                    class="mt-2"-->
-<!--                    :message="storeForm.errors.question"-->
-<!--                />-->
+                <InputError
+                    class="mt-2"
+                    :message="storeForm.errors.question"
+                />
+            </div>
+
+            <div>
+                <InputLabel
+                    for="is_binary"
+                    value="Is Binary"
+                />
+
+                <RadioButtonToggle
+                    v-model="storeForm.is_binary"
+                    name="is_binary"
+                    class="mt-1 mb-3.5"
+                />
+
+                <InputError
+                    class="mt-2"
+                    :message="storeForm.errors.is_binary"
+                />
+            </div>
+
+            <div v-show="storeForm.is_binary">
+                <InputLabel
+                    for="binary_correct_answer"
+                    value="Binary Correct Answer"
+                />
+
+                <RadioButtonToggle
+                    v-model="storeForm.binary_correct_answer"
+                    name="binary_correct_answer"
+                    class="mt-1 mb-3.5"
+                />
+
+                <InputError
+                    class="mt-2"
+                    :message="storeForm.errors.binary_correct_answer"
+                />
             </div>
 
             <div class="col-span-2 flex justify-end gap-3 my-2 pt-1 px-4">
                 <ResetSaveButtons
                     :processing="storeForm.processing"
                     :recently-successful="storeForm.recentlySuccessful"
-                    @reset="closeCreateModal"
+                    @reset="storeForm.reset()"
                 />
             </div>
         </form>
