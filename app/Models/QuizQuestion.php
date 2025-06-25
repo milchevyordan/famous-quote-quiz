@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Traits\HasChangeLogs;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuizQuestion extends Model
 {
     use HasChangeLogs;
-
 
     /**
      * The attributes that are mass assignable.
@@ -30,4 +30,14 @@ class QuizQuestion extends Model
         'is_binary' => 'boolean',
         'binary_correct_answer' => 'boolean',
     ];
+
+    /**
+     * Return the answers relation
+     *
+     * @return HasMany
+     */
+    public function answers(): HasMany
+    {
+        return $this->hasMany(QuizAnswer::class);
+    }
 }

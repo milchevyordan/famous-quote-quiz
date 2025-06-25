@@ -82,6 +82,8 @@ class QuizQuestionService
         $quizQuestion->creator_id = auth()->id();
         $quizQuestion->save();
 
+        $quizQuestion->answers()->createMany($validatedRequest['answers']);
+
         $this->setQuizQuestion($quizQuestion);
 
         return $this;

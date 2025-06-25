@@ -23,9 +23,12 @@ class StoreQuizQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'question' => 'string|required|max:255',
+            'question' => 'required|string|max:255',
             'is_binary' => 'boolean|required',
-            'binary_correct_answer' => 'boolean|nullable',
+            'binary_correct_answer' => 'boolean|nullable|required_if:is_binary,true',
+            'answers' => 'array|nullable|required_without:is_binary',
+            'answers.*.answer' => 'nullable|string|max:255|required_without:is_binary',
+            'answers.*.is_correct' => 'nullable|boolean|max:255|required_without:is_binary',
         ];
     }
 }

@@ -28,6 +28,11 @@ const modelDefaults: QuizQuestionForm = {
     question: null!,
     is_binary: true,
     binary_correct_answer: null!,
+    answers: {
+        1: { answer: null, is_correct: false },
+        2: { answer: null, is_correct: false },
+        3: { answer: null, is_correct: false },
+    },
 };
 
 const showCreateModal = ref(false);
@@ -191,11 +196,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                 />
 
                 <TextInput
-                    id="quantity"
+                    id="question"
                     v-model="storeForm.question"
                     type="text"
                     :placeholder="'Question'"
                     class="mt-1 block w-full mb-3.5"
+                    required
                 />
 
                 <InputError
@@ -222,7 +228,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 />
             </div>
 
-            <div v-show="storeForm.is_binary">
+            <div v-if="storeForm.is_binary">
                 <InputLabel
                     for="binary_correct_answer"
                     value="Binary Correct Answer"
@@ -232,12 +238,57 @@ const breadcrumbs: BreadcrumbItem[] = [
                     v-model="storeForm.binary_correct_answer"
                     name="binary_correct_answer"
                     class="mt-1 mb-3.5"
+                    required
                 />
 
                 <InputError
                     class="mt-2"
                     :message="storeForm.errors.binary_correct_answer"
                 />
+            </div>
+
+            <div
+                v-else
+                v-for="number in [1, 2, 3]"
+                :key="number"
+                class="flex gap-2"
+            >
+                <div>
+                    <InputLabel
+                        :for="'answers_' + number + '_answer'"
+                        :value="`Answer ${number}`"
+                    />
+
+                    <TextInput
+                        :id="'answers_' + number + '_answer'"
+                        v-model="storeForm.answers[number].answer"
+                        type="text"
+                        class="mt-1 block w-full"
+                    />
+
+                    <InputError
+                        class="mt-2"
+                        :message="storeForm.errors['answers.' + number + '.answer']"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel
+                        :for="'answers_' + number + '_is_correct'"
+                        :value="`Correct`"
+                    />
+
+                    <RadioButtonToggle
+                        v-model="storeForm.answers[number].is_correct"
+                        :name="'answers_' + number + '_is_correct'"
+                        class="mt-1 mb-3.5"
+                    />
+
+                    <InputError
+                        class="mt-2"
+                        :message="storeForm.errors['answers.' + number + '.is_correct']"
+                    />
+                </div>
             </div>
 
             <div class="col-span-2 flex justify-end gap-3 my-2 pt-1 px-4">

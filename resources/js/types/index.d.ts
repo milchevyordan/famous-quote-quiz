@@ -73,8 +73,15 @@ export interface QuizQuestion {
     question: string;
     is_binary: boolean;
     binary_correct_answer: boolean;
+    answers?: QuizAnswer[];
 }
 
 export interface QuizQuestionForm extends Form, FormMethod {
 
+}
+
+interface QuizAnswer {
+    id: number;
+    answer: string;
+    is_correct: boolean;
 }
