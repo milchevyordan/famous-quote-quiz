@@ -7,8 +7,9 @@ import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 import PrimaryButton from '@/components/PrimaryButton.vue';
 import { ref } from 'vue';
 import { QuizQuestion } from '@/types';
+import SecondaryButton from '@/components/SecondaryButton.vue';
 
-const props = defineProps<{
+defineProps<{
     questions?: QuizQuestion[];
 }>();
 
@@ -17,28 +18,47 @@ const form = useForm<{
     name: string;
     last_name: string;
     email: string;
+    total_score: number;
+    total_number_of_unanswered_questions: number;
+    time_taken_seconds: number;
+    answers: any;
 }>({
     is_binary: true,
     name: null!,
     last_name: null!,
     email: null!,
+    total_score: 0,
+    total_number_of_unanswered_questions: 0,
+    time_taken_seconds: null!,
+    answers: {},
 });
 
 const quizStarted = ref<boolean>(false);
 
 const startQuiz = async () => {
-    if(!props.questions){
-        await new Promise((resolve, reject) => {
-            router.reload({
-                data: { is_binary: form.is_binary },
-                only: ['questions'],
-                onSuccess: resolve,
-                onError: reject,
-            });
+    await new Promise((resolve, reject) => {
+        router.reload({
+            data: { is_binary: form.is_binary },
+            only: ['questions'],
+            onSuccess: resolve,
+            onError: reject,
         });
-    }
+    });
 
+    form.reset('answers');
     quizStarted.value = true;
+};
+
+const submit = () => {
+    form.post(route("store"), {
+        preserveScroll: true,
+    });
+    form.reset();
+    quizStarted.value = false;
+};
+
+const toggleQuizStarted = () => {
+    quizStarted.value = !quizStarted.value;
 };
 </script>
 
@@ -47,6 +67,12 @@ const startQuiz = async () => {
     <div class="flex min-h-screen flex-col items-center bg-[#FDFDFC] p-6 text-[#1b1b18] lg:justify-center lg:p-8 dark:bg-[#0a0a0a]">
         <header class="not-has-[nav]:hidden mb-6 w-full max-w-[335px] text-sm lg:max-w-4xl">
             <nav class="flex items-center justify-end gap-4">
+                <Link
+                    :href="route('home')"
+                    class="inline-block rounded-sm border border-[#19140035] px-5 py-1.5 text-sm leading-normal text-[#1b1b18] hover:border-[#1915014a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:border-[#62605b]"
+                >
+                    Quiz Test
+                </Link>
                 <Link
                     v-if="$page.props.auth.user"
                     :href="route('dashboard')"
@@ -122,14 +148,35 @@ const startQuiz = async () => {
                     </div>
 
                     <div class="pt-1">
-                        <PrimaryButton>Start Quiz</PrimaryButton>
+                        <PrimaryButton v-if="!questions?.length">Start Quiz</PrimaryButton>
+                        <SecondaryButton v-else @click="toggleQuizStarted">></SecondaryButton>
                     </div>
                 </form>
 
                 <div v-show="quizStarted"
                     class="flex-1 rounded-bl-lg rounded-br-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-br-none lg:rounded-tl-lg lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
                 >
+                    <div class="mb-4">
+                        <SecondaryButton @click="toggleQuizStarted"><</SecondaryButton>
+                    </div>
+
+                    <div>
+                        <InputLabel for="is_binary" value="Type of quiz" />
+
+                        <RadioButtonToggle
+                            v-model="form.is_binary"
+                            name="is_binary"
+                            left-button-label="Binary (Yes/No)"
+                            right-button-label="Multiple choice"
+                            class="mb-3.5 mt-1"
+                            @change="startQuiz"
+                        />
+
+                        <InputError class="mt-2" :message="form.errors.is_binary" />
+                    </div>
+
                     <h2 class="mb-4 text-lg font-bold">Quiz Questions</h2>
+                    {{form}}
                     <div
                         v-for="(question, i) in questions"
                         :key="question.id"
@@ -147,7 +194,8 @@ const startQuiz = async () => {
                                 <input
                                     type="radio"
                                     class="h-4 w-4 accent-indigo-600"
-                                    :name="`q${question.id}`"
+                                    :name="`answers_${question.id}`"
+                                    v-model="form.answers[question.id]"
                                     value="1"
                                 />
                                 Yes
@@ -159,7 +207,8 @@ const startQuiz = async () => {
                                 <input
                                     type="radio"
                                     class="h-4 w-4 accent-indigo-600"
-                                    :name="`q${question.id}`"
+                                    :name="`answers_${question.id}`"
+                                    v-model="form.answers[question.id]"
                                     value="0"
                                 />
                                 No
@@ -176,14 +225,18 @@ const startQuiz = async () => {
                                 <input
                                     type="radio"
                                     class="h-4 w-4 accent-indigo-600"
-                                    :name="`q${question.id}`"
-                                    :value="key"
+                                    :name="`answers_${question.id}`"
+                                    v-model="form.answers[question.id]"
+                                    :value="answer.id"
                                 />
                                 {{ answer.answer }}
                             </label>
                         </div>
                     </div>
-                    <PrimaryButton>Submit Answers</PrimaryButton>
+
+                    <div class="pt-1">
+                        <PrimaryButton @click="submit">Submit Answers</PrimaryButton>
+                    </div>
                 </div>
             </div>
         </div>

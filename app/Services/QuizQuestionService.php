@@ -82,55 +82,11 @@ class QuizQuestionService
         $quizQuestion->creator_id = auth()->id();
         $quizQuestion->save();
 
-        $quizQuestion->answers()->createMany($validatedRequest['answers']);
-
-        $this->setQuizQuestion($quizQuestion);
-
-        return $this;
-    }
-
-    /**
-     * Add payment to the client.
-     *
-     * @param array $validatedRequest
-     * @return self
-     */
-    public function addPaymentToQuizQuestion(array $validatedRequest): self
-    {
-        $clientPayment = new QuizQuestionPayment();
-        $clientPayment->fill($validatedRequest);
-        $clientPayment->creator_id = auth()->id();
-        $clientPayment->client_id = $validatedRequest['client_id'];
-        $clientPayment->save();
-
-        return $this;
-    }
-
-    /**
-     * Add a visit to the client.
-     *
-     * @param array $validatedRequest
-     * @return self
-     */
-    public function addVisitToQuizQuestion(array $validatedRequest): self
-    {
-        $clientVisit = new QuizQuestionVisit();
-        $clientVisit->fill($validatedRequest);
-        $clientVisit->creator_id = auth()->id();
-        $clientVisit->save();
-
-        if (! $validatedRequest['use_multisport']) {
-            return $this;
+        if (!$validatedRequest['is_binary']) {
+            $quizQuestion->answers()->createMany($validatedRequest['answers']);
         }
 
-        $clientPayment = new QuizQuestionPayment();
-        $clientPayment->fill($validatedRequest);
-        $clientPayment->amount = 10;
-        $clientPayment->creator_id = auth()->id();
-        $clientPayment->date_from = now();
-        $clientPayment->date_to = now();
-        $clientPayment->client_id = $validatedRequest['client_id'];
-        $clientPayment->save();
+        $this->setQuizQuestion($quizQuestion);
 
         return $this;
     }

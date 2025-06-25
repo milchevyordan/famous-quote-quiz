@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->unsignedTinyInteger('total_score')->nullable();
+            $table->unsignedTinyInteger('total_number_of_unanswered_questions')->nullable();
+            $table->unsignedInteger('time_taken_seconds')->nullable();
             $table->timestamps();
         });
     }
