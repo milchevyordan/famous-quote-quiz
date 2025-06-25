@@ -56,7 +56,7 @@ class QuizQuestionService
     public function getIndexMethodDatatable(): DataTable
     {
         return (new DataTable(
-            QuizQuestion::query()
+            QuizQuestion::with('answers')
         ))
             ->setColumn('action', 'Action')
             ->setColumn('id', '#', true, true)
