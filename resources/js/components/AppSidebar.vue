@@ -14,6 +14,11 @@ const mainNavItems: NavItem[] = [
         href: '/dashboard',
         icon: LayoutGrid,
     },
+    {
+        title: 'Quiz Questions',
+        href: '/quiz/question',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [

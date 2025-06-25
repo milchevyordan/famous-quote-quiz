@@ -36,3 +36,45 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+export type FormMethod = {
+    _method?: string;
+};
+
+export type Form = {
+    [key: string]: any;
+};
+
+export interface ChangeLog {
+    id: string;
+    creator_id: number;
+    creator: User;
+    changeable: Record<string, string>;
+    changeable_type: string;
+    changeable_id: number;
+    change: string;
+    created_at: string;
+}
+
+interface ChangeLogsChange {
+    old: string;
+    new: string;
+}
+
+export interface DeleteForm {
+    id: number;
+    name: string;
+    amount?: number;
+    created_at?: Date;
+}
+
+export interface QuizQuestion {
+    id: number;
+    question: string;
+    is_binary: boolean;
+    binary_correct_answer: boolean;
+}
+
+export interface QuizQuestionForm extends Form, FormMethod {
+
+}
