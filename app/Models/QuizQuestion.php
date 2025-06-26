@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use App\Traits\HasChangeLogs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuizQuestion extends Model
 {
-    use HasChangeLogs;
-
     /**
      * The attributes that are mass assignable.
      *

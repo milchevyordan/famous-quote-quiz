@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuizQuestionRequest;
 use App\Http\Requests\UpdateQuizQuestionRequest;
 use App\Models\QuizQuestion;
-use App\Services\ChangeLogService;
 use App\Services\QuizQuestionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -30,8 +29,6 @@ class QuizQuestionController extends Controller
     {
         return Inertia::render('quizQuestions/Index', [
             'dataTable'         => $this->service->getIndexMethodDatatable(),
-            'changeLogsLimited' => ChangeLogService::getChangeLogsLimited(QuizQuestion::class),
-            'changeLogs'        => Inertia::lazy(fn () => ChangeLogService::getChangeLogsDataTable(QuizQuestion::class)),
         ]);
     }
 

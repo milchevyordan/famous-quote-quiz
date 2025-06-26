@@ -46,22 +46,6 @@ export type Form = {
     [key: string]: any;
 };
 
-export interface ChangeLog {
-    id: string;
-    creator_id: number;
-    creator: User;
-    changeable: Record<string, string>;
-    changeable_type: string;
-    changeable_id: number;
-    change: string;
-    created_at: string;
-}
-
-interface ChangeLogsChange {
-    old: string;
-    new: string;
-}
-
 export interface DeleteForm {
     id: number;
     name: string;

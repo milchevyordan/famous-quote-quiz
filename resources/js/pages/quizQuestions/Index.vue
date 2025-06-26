@@ -2,14 +2,13 @@
 import { Head, InertiaForm, useForm } from '@inertiajs/vue3';
 import {ref} from "vue";
 
-import ChangeLogs from "@/components/HTML/ChangeLogs.vue";
 import ResetSaveButtons from "@/components/HTML/ResetSaveButtons.vue";
 import Modal from "@/components/Modal.vue";
 import Table from "@/DataTable/Table.vue";
 import { DataTable } from "@/DataTable/types";
 import IconPencilSquare from "@/icons/PencilSquare.vue";
 import IconTrash from "@/icons/Trash.vue";
-import { type BreadcrumbItem, ChangeLog, QuizAnswer, QuizQuestion, QuizQuestionForm } from '@/types';
+import { type BreadcrumbItem, QuizAnswer, QuizQuestion, QuizQuestionForm } from '@/types';
 import {dateTimeToLocaleString} from "@/utils";
 import AppLayout from "@/layouts/AppLayout.vue";
 import InputLabel from "@/components/InputLabel.vue";
@@ -19,8 +18,6 @@ import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 
 defineProps<{
     dataTable: DataTable<QuizQuestion>;
-    changeLogsLimited: ChangeLog[];
-    changeLogs?: DataTable<ChangeLog>;
 }>();
 
 const modelDefaults: QuizQuestionForm = {
@@ -179,12 +176,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </Table>
                     </div>
                 </div>
-
-                <ChangeLogs
-                    :change-logs-limited="changeLogsLimited"
-                    :change-logs="changeLogs"
-                    :show-id="true"
-                />
             </div>
         </div>
     </AppLayout>

@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAttemptRequest;
 use App\Models\Attempt;
 use App\Models\GuestUser;
 use App\Models\QuizQuestion;
+use Illuminate\Support\Facades\Cache;
 
 class AttemptService
 {
@@ -149,6 +150,8 @@ class AttemptService
         $attempt->guest_user_id = $guestUser->id;
         $attempt->save();
 
+        Cache::forget('leaderboard.top10');
+
         return $attempt;
     }
 
@@ -160,10 +163,12 @@ class AttemptService
      */
     public function getTopScorers(): mixed
     {
-        return Attempt::with('guestUser')
-            ->orderByDesc('total_score')
-            ->orderBy('time_taken_seconds')
-            ->take(10)
-            ->get();
+        return Cache::remember('leaderboard.top10', now()->addMinutes(60), function () {
+            return Attempt::with('guestUser')
+                ->orderByDesc('total_score')
+                ->orderBy('time_taken_seconds')
+                ->take(10)
+                ->get();
+        });
     }
 }

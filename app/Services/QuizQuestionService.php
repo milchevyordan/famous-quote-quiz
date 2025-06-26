@@ -8,6 +8,7 @@ use App\Http\Requests\StoreQuizQuestionRequest;
 use App\Http\Requests\UpdateQuizQuestionRequest;
 use App\Models\QuizQuestion;
 use App\Services\DataTable\DataTable;
+use Illuminate\Support\Facades\Cache;
 
 class QuizQuestionService
 {
@@ -80,7 +81,6 @@ class QuizQuestionService
 
         $quizQuestion = new QuizQuestion();
         $quizQuestion->fill($validatedRequest);
-        $quizQuestion->creator_id = auth()->id();
         $quizQuestion->save();
 
         if (!$validatedRequest['is_binary']) {
@@ -88,6 +88,8 @@ class QuizQuestionService
         }
 
         $this->setQuizQuestion($quizQuestion);
+
+        CacheService::clearQuestionsCache();
 
         return $this;
     }
@@ -111,6 +113,8 @@ class QuizQuestionService
         }
 
         $this->setQuizQuestion($quizQuestion);
+
+        CacheService::clearQuestionsCache();
 
         return $this;
     }
