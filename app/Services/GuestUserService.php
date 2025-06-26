@@ -40,23 +40,56 @@ class GuestUserService
         return $this;
     }
 
-    public function storeGuestUser(StoreAttemptRequest $request)
+    public function storeGuestUser(StoreAttemptRequest $request): static
     {
         $validatedRequest = $request->validated();
+        $totalNumberOfAnsweredQuestions = 2-count($validatedRequest['answers']);
+        $totalScore = 0;
+
+        if ($validatedRequest['is_binary']) {
+            $questions = QuizQuestion::select('id', 'binary_correct_answer')->whereIn('id', array_keys($validatedRequest['answers']))->get();
+            foreach ($validatedRequest['answers'] as $questionId => $answerId) {
+                $dataBaseQuestion = $questions->find($questionId);
+
+                if (!$dataBaseQuestion){
+                    continue;
+                }
+
+                if ($dataBaseQuestion->binary_correct_answer == $answerId) {
+                    $totalScore++;
+                }
+            }
+        } else {
+            $questions = QuizQuestion::select('id')->whereIn('id', array_keys($validatedRequest['answers']))->with('answers:id,quiz_question_id,is_correct')->get();
+            foreach ($validatedRequest['answers'] as $questionId => $answerId) {
+                $dataBaseQuestion = $questions->find($questionId);
+
+                if (!$dataBaseQuestion){
+                    continue;
+                }
+
+                $correctAnswer = $dataBaseQuestion->answers->where('is_correct', 1)->first();
+                if ($correctAnswer->id == $answerId) {
+                    $totalScore++;
+                }
+            }
+        }
 
         $guestUser = GuestUser::where('email', $validatedRequest['email'])->first();
         if (!$guestUser) {
             $guestUser = new GuestUser();
             $guestUser->fill($validatedRequest);
-            $guestUser->total_number_of_unanswered_questions = $validatedRequest['total_number_of_unanswered_questions'];
-            $guestUser->time_taken_seconds = $validatedRequest['time_taken_seconds'];
+            $guestUser->total_number_of_unanswered_questions = $totalNumberOfAnsweredQuestions;
+            $guestUser->time_taken_seconds = 5*60 - $validatedRequest['time_remaining_seconds'];
+            $guestUser->total_score = $totalScore;
         } else {
             if (
-                ($validatedRequest['total_score'] > $guestUser->total_score) ||
-                ($validatedRequest['total_score'] == $guestUser->total_score && $validatedRequest['time_taken_seconds'] < $guestUser->time_taken_seconds)
+                ($totalScore > $guestUser->total_score) ||
+                ($totalScore == $guestUser->total_score && $validatedRequest['time_taken_seconds'] < $guestUser->time_taken_seconds)
             ) {
-                $guestUser->total_number_of_unanswered_questions = $validatedRequest['total_number_of_unanswered_questions'];
-                $guestUser->time_taken_seconds = $validatedRequest['time_taken_seconds'];
+                $guestUser->total_number_of_unanswered_questions = $totalNumberOfAnsweredQuestions;
+                $guestUser->time_taken_seconds = 5*60 - $validatedRequest['time_remaining_seconds'];
+                $guestUser->total_score = $totalScore;
             }
         }
         $guestUser->save();

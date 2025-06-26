@@ -6,8 +6,9 @@ import TextInput from '@/components/TextInput.vue';
 import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 import PrimaryButton from '@/components/PrimaryButton.vue';
 import { ref } from 'vue';
-import { QuizQuestion } from '@/types';
+import { QuizAnswer, QuizQuestion } from '@/types';
 import SecondaryButton from '@/components/SecondaryButton.vue';
+import VueCountdown from '@chenfengyuan/vue-countdown';
 
 defineProps<{
     questions?: QuizQuestion[];
@@ -18,18 +19,14 @@ const form = useForm<{
     name: string;
     last_name: string;
     email: string;
-    total_score: number;
-    total_number_of_unanswered_questions: number;
-    time_taken_seconds: number;
+    time_remaining_seconds: number;
     answers: any;
 }>({
     is_binary: true,
     name: null!,
     last_name: null!,
     email: null!,
-    total_score: 0,
-    total_number_of_unanswered_questions: 0,
-    time_taken_seconds: null!,
+    time_remaining_seconds: null!,
     answers: {},
 });
 
@@ -50,6 +47,9 @@ const startQuiz = async () => {
 };
 
 const submit = () => {
+    const remaining = countdown.value?.totalMilliseconds;
+    form.time_remaining_seconds = Math.floor(remaining / 1000);
+    console.log(form);
     form.post(route("store"), {
         preserveScroll: true,
     });
@@ -60,6 +60,28 @@ const submit = () => {
 const toggleQuizStarted = () => {
     quizStarted.value = !quizStarted.value;
 };
+
+const getCorrectAnswerText = (question: QuizQuestion) => {
+    if (question.is_binary) {
+        return question.binary_correct_answer ? 'Yes' : 'No';
+    }
+
+    const correct = question.answers?.find((answer: QuizAnswer) => answer.is_correct == 1)
+    return correct?.answer ?? ''
+}
+
+const isCorrect = (question: QuizQuestion) => {
+    const selectedId = form.answers[question.id]
+
+    if (question.is_binary) {
+        return selectedId == question.binary_correct_answer;
+    }
+
+    const answer = question.answers?.find(a => a.id === selectedId)
+    return answer?.is_correct == 1
+}
+
+const countdown = ref<typeof VueCountdown>(null!);
 </script>
 
 <template>
@@ -149,15 +171,31 @@ const toggleQuizStarted = () => {
 
                     <div class="pt-1">
                         <PrimaryButton v-if="!questions?.length">Start Quiz</PrimaryButton>
-                        <SecondaryButton v-else @click="toggleQuizStarted">></SecondaryButton>
+                        <SecondaryButton v-else @click="toggleQuizStarted">
+                            >
+                        </SecondaryButton>
                     </div>
                 </form>
 
                 <div v-show="quizStarted"
                     class="flex-1 rounded-bl-lg rounded-br-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-br-none lg:rounded-tl-lg lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
                 >
+                    <div class="text-lg font-mono text-right text-indigo-600 dark:text-indigo-300">
+                        <vue-countdown
+                            ref="countdown"
+                            v-if="quizStarted"
+                            :time="5 * 60 * 1000"
+                            v-slot="{ minutes, seconds }"
+                            @end="submit"
+                        >
+                            Time Remaining：{{ minutes }} minutes, {{ seconds }} seconds.
+                        </vue-countdown>
+                    </div>
+
                     <div class="mb-4">
-                        <SecondaryButton @click="toggleQuizStarted"><</SecondaryButton>
+                        <SecondaryButton @click="toggleQuizStarted">
+                            <
+                        </SecondaryButton>
                     </div>
 
                     <div>
@@ -176,7 +214,7 @@ const toggleQuizStarted = () => {
                     </div>
 
                     <h2 class="mb-4 text-lg font-bold">Quiz Questions</h2>
-                    {{form}}
+
                     <div
                         v-for="(question, i) in questions"
                         :key="question.id"
@@ -231,6 +269,20 @@ const toggleQuizStarted = () => {
                                 />
                                 {{ answer.answer }}
                             </label>
+
+                            <!-- Feedback -->
+                        </div>
+
+                        <div
+                            v-if="form.answers[question.id]"
+                            class="flex items-center gap-3 rounded-md border px-4 py-2 text-sm font-medium shadow-sm mt-2"
+                            :class="{
+                                'bg-green-100 border-green-400 text-green-700 dark:bg-green-900 dark:border-green-600 dark:text-green-200': isCorrect(question),
+                                'bg-red-100 border-red-400 text-red-700 dark:bg-red-900 dark:border-red-600 dark:text-red-200': !isCorrect(question),
+                            }"
+                        >
+                            <span v-if="isCorrect(question)">✅ Correct! The right answer is <strong>{{ getCorrectAnswerText(question) }}</strong></span>
+                            <span v-else>❌ Sorry, you are wrong! The right answer is <strong>{{ getCorrectAnswerText(question) }}</strong></span>
                         </div>
                     </div>
 

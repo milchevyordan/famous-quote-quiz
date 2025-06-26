@@ -23,9 +23,11 @@ class StoreAttemptRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'is_binary' => 'required|boolean',
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|max:255',
+            'time_remaining_seconds' => 'required|integer',
             'answers' => 'array|required',
         ];
     }
