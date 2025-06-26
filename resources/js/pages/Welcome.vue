@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import InputLabel from '@/components/InputLabel.vue';
 import TextInput from '@/components/TextInput.vue';
 import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 import PrimaryButton from '@/components/PrimaryButton.vue';
-import { ref } from 'vue';
-import { QuizAnswer, QuizQuestion } from '@/types';
+import { onMounted, ref } from 'vue';
+import { GuestUser, QuizAnswer, QuizQuestion } from '@/types';
 import SecondaryButton from '@/components/SecondaryButton.vue';
 import VueCountdown from '@chenfengyuan/vue-countdown';
 import GuestAppLayout from '@/layouts/GuestAppLayout.vue';
 
-defineProps<{
+const props = defineProps<{
+    guestUser?: GuestUser;
     questions?: QuizQuestion[];
 }>();
 
@@ -24,12 +25,18 @@ const form = useForm<{
     answers: any;
 }>({
     is_binary: true,
-    name: null!,
-    last_name: null!,
-    email: null!,
+    name: props.guestUser?.name ?? null!,
+    last_name: props.guestUser?.last_name ?? null!,
+    email: props.guestUser?.email ?? null!,
     time_remaining_seconds: null!,
     answers: {},
 });
+
+onMounted(() => {
+    if (props.guestUser){
+        startQuiz();
+    }
+})
 
 const quizStarted = ref<boolean>(false);
 
@@ -47,12 +54,16 @@ const startQuiz = async () => {
     quizStarted.value = true;
 };
 
-const submit = () => {
+const submit = async ()  => {
     const remaining = countdown.value?.totalMilliseconds;
     form.time_remaining_seconds = Math.floor(remaining / 1000);
-    console.log(form);
-    form.post(route('store'), {
-        preserveScroll: true,
+
+    await new Promise((resolve, reject) => {
+        form.post(route('store'), {
+            preserveScroll: true,
+            onSuccess: resolve,
+            onError: reject,
+        });
     });
     form.reset();
     quizStarted.value = false;
@@ -110,7 +121,7 @@ const countdown = ref<typeof VueCountdown>(null!);
             <div>
                 <InputLabel for="name" :value="`Name`" />
 
-                <TextInput id="name" v-model="form.name" type="text" :placeholder="'Name'" class="mb-3.5 mt-1 block w-full" />
+                <TextInput id="name" v-model="form.name" type="text" :placeholder="'Name'" class="mb-3.5 mt-1 block w-full" required />
 
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
@@ -118,7 +129,7 @@ const countdown = ref<typeof VueCountdown>(null!);
             <div>
                 <InputLabel for="last_name" :value="`Last Name`" />
 
-                <TextInput id="last_name" v-model="form.last_name" type="text" :placeholder="'Last Name'" class="mb-3.5 mt-1 block w-full" />
+                <TextInput id="last_name" v-model="form.last_name" type="text" :placeholder="'Last Name'" class="mb-3.5 mt-1 block w-full" required />
 
                 <InputError class="mt-2" :message="form.errors.last_name" />
             </div>
@@ -126,7 +137,7 @@ const countdown = ref<typeof VueCountdown>(null!);
             <div>
                 <InputLabel for="email" :value="`Email`" />
 
-                <TextInput id="email" v-model="form.email" type="email" :placeholder="'Email'" class="mb-3.5 mt-1 block w-full" />
+                <TextInput id="email" v-model="form.email" type="email" :placeholder="'Email'" class="mb-3.5 mt-1 block w-full" required />
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
@@ -142,7 +153,13 @@ const countdown = ref<typeof VueCountdown>(null!);
             class="flex-1 rounded-bl-lg rounded-br-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-br-none lg:rounded-tl-lg lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
         >
             <div class="text-right font-mono text-lg text-indigo-600 dark:text-indigo-300">
-                <vue-countdown ref="countdown" v-if="quizStarted" :time="5 * 60 * 1000" v-slot="{ minutes, seconds }" @end="submit">
+                <vue-countdown
+                    ref="countdown"
+                    v-if="quizStarted"
+                    :time="usePage().props.time_for_quiz_in_minutes * 60 * 1000"
+                    v-slot="{ minutes, seconds }"
+                    @end="submit"
+                >
                     Time Remaining：{{ minutes }} minutes, {{ seconds }} seconds.
                 </vue-countdown>
             </div>

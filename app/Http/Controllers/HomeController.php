@@ -22,9 +22,10 @@ class HomeController extends Controller
         $this->service = new GuestUserService();
     }
 
-    public function index(): Response
+    public function index(GuestUser $guestUser = null): Response
     {
         return Inertia::render('Welcome', [
+            'guestUser' => fn () => $guestUser,
             'questions' => Inertia::lazy(fn () => QuizService::getQuestions())
         ]);
     }
@@ -38,7 +39,7 @@ class HomeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('leaderboard', ['guest_user' => $this->service->getGuestUser()->id])->with('success', 'Record successfully created.');
+            return redirect()->route('leaderboard', ['guest_user' => $this->service->getGuestUser()->id]);
 
         } catch (Throwable $th) {
             DB::rollBack();
@@ -52,8 +53,8 @@ class HomeController extends Controller
     public function leaderboard(GuestUser $guestUser = null): Response
     {
         return Inertia::render('Leaderboard', [
-            'guestUser' => $guestUser,
-            'topScorers' => $this->service->getTopScorers()
+            'guestUser' => fn () => $guestUser,
+            'topScorers' => fn () => $this->service->getTopScorers()
         ]);
     }
 }

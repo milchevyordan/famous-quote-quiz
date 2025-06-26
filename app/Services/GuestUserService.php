@@ -43,8 +43,8 @@ class GuestUserService
     public function storeGuestUser(StoreAttemptRequest $request): static
     {
         $validatedRequest = $request->validated();
-        $totalNumberOfAnsweredQuestions = 2-count($validatedRequest['answers']);
-        $totalScore = 0;
+        $totalNumberOfAnsweredQuestions = count($validatedRequest['answers']);
+        $totalCorrectQuestions = 0;
 
         if ($validatedRequest['is_binary']) {
             $questions = QuizQuestion::select('id', 'binary_correct_answer')->whereIn('id', array_keys($validatedRequest['answers']))->get();
@@ -56,7 +56,7 @@ class GuestUserService
                 }
 
                 if ($dataBaseQuestion->binary_correct_answer == $answerId) {
-                    $totalScore++;
+                    $totalCorrectQuestions++;
                 }
             }
         } else {
@@ -70,26 +70,28 @@ class GuestUserService
 
                 $correctAnswer = $dataBaseQuestion->answers->where('is_correct', 1)->first();
                 if ($correctAnswer->id == $answerId) {
-                    $totalScore++;
+                    $totalCorrectQuestions++;
                 }
             }
         }
+
+        $totalScorePercentage = ($totalCorrectQuestions / config('app.number_of_questions')) * 100;
 
         $guestUser = GuestUser::where('email', $validatedRequest['email'])->first();
         if (!$guestUser) {
             $guestUser = new GuestUser();
             $guestUser->fill($validatedRequest);
             $guestUser->total_number_of_unanswered_questions = $totalNumberOfAnsweredQuestions;
-            $guestUser->time_taken_seconds = 5*60 - $validatedRequest['time_remaining_seconds'];
-            $guestUser->total_score = $totalScore;
+            $guestUser->time_taken_seconds = config('app.time_for_quiz_in_minutes') * 60 - $validatedRequest['time_remaining_seconds'];
+            $guestUser->total_score = $totalScorePercentage;
         } else {
             if (
-                ($totalScore > $guestUser->total_score) ||
-                ($totalScore == $guestUser->total_score && $validatedRequest['time_taken_seconds'] < $guestUser->time_taken_seconds)
+                ($totalScorePercentage > $guestUser->total_score) ||
+                ($totalScorePercentage == $guestUser->total_score && $validatedRequest['time_taken_seconds'] < $guestUser->time_taken_seconds)
             ) {
                 $guestUser->total_number_of_unanswered_questions = $totalNumberOfAnsweredQuestions;
-                $guestUser->time_taken_seconds = 5*60 - $validatedRequest['time_remaining_seconds'];
-                $guestUser->total_score = $totalScore;
+                $guestUser->time_taken_seconds = config('app.time_for_quiz_in_minutes') * 60 - $validatedRequest['time_remaining_seconds'];
+                $guestUser->total_score = $totalScorePercentage;
             }
         }
         $guestUser->save();

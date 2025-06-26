@@ -6,7 +6,7 @@ use App\Http\Controllers\QuizQuestionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/{guest_user?}', [HomeController::class, 'index'])->name('home');
 Route::post('/store', [HomeController::class, 'store'])->name('store');
 Route::get('/leaderboard/{guest_user?}', [HomeController::class, 'leaderboard'])->name('leaderboard');
 

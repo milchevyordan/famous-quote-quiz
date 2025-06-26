@@ -4,8 +4,8 @@ import { GuestUser } from '@/types';
 import GuestAppLayout from '@/layouts/GuestAppLayout.vue';
 
 defineProps<{
-    topScorers: GuestUser[];
     guestUser?: GuestUser;
+    topScorers: GuestUser[];
 }>();
 </script>
 
@@ -37,7 +37,7 @@ defineProps<{
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Total Score</p>
-                        <p class="font-semibold">{{ guestUser.total_score }} / 10</p>
+                        <p class="font-semibold">{{ guestUser.total_score }}%</p>
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Time Used</p>
@@ -48,7 +48,7 @@ defineProps<{
                 <div class="pt-3">
                     <Link
                         class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
-                        :href="route('home')"
+                        :href="route('home', guestUser.id)"
                     >
                         Restart
                     </Link>
@@ -79,7 +79,7 @@ defineProps<{
                         {{ guestUser.name }} {{ guestUser.last_name }}
                     </td>
                     <td class="px-4 py-3">{{ guestUser.email }}</td>
-                    <td class="px-4 py-3">{{ guestUser.total_score }} out of 10</td>
+                    <td class="px-4 py-3">{{ guestUser.total_score }}%</td>
                     <td class="px-4 py-3">{{ guestUser.time_taken_seconds }} seconds</td>
                 </tr>
                 </tbody>
