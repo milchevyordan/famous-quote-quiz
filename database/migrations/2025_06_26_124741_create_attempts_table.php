@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('guest_users', function (Blueprint $table) {
+        Schema::create('attempts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('last_name');
-            $table->string('email')->unique();
+            $table->foreignId('guest_user_id')->constrained()->cascadeOnDelete();
+
+            $table->unsignedTinyInteger('total_score')->nullable();
+            $table->unsignedTinyInteger('total_number_of_unanswered_questions')->nullable();
+            $table->unsignedInteger('time_taken_seconds')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('guest_users');
+        Schema::dropIfExists('attempts');
     }
 };

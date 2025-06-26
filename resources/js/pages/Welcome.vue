@@ -98,6 +98,7 @@ const countdown = ref<typeof VueCountdown>(null!);
 
 <template>
     <Head title="Welcome" />
+
     <GuestAppLayout>
         <form
             v-show="!quizStarted"

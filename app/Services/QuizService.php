@@ -8,7 +8,12 @@ use App\Models\QuizQuestion;
 
 class QuizService
 {
-    public static function getQuestions()
+    /**
+     * Return the questions when starting the quiz
+     *
+     * @return mixed
+     */
+    public static function getQuestions(): mixed
     {
         return QuizQuestion::select('id', 'question', 'is_binary', 'binary_correct_answer')
             ->where('is_binary', request('is_binary') == 'true')

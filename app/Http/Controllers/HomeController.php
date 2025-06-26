@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttemptRequest;
+use App\Models\Attempt;
 use App\Models\GuestUser;
-use App\Services\GuestUserService;
+use App\Services\AttemptService;
 use App\Services\QuizService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -15,13 +16,19 @@ use Throwable;
 
 class HomeController extends Controller
 {
-    public GuestUserService $service;
+    public AttemptService $service;
 
     public function __construct()
     {
-        $this->service = new GuestUserService();
+        $this->service = new AttemptService();
     }
 
+    /**
+     * Go to homepage
+     *
+     * @param GuestUser|null $guestUser
+     * @return Response
+     */
     public function index(GuestUser $guestUser = null): Response
     {
         return Inertia::render('Welcome', [
@@ -30,16 +37,22 @@ class HomeController extends Controller
         ]);
     }
 
+    /**
+     * Store the quiz
+     *
+     * @param StoreAttemptRequest $request
+     * @return RedirectResponse
+     */
     public function store(StoreAttemptRequest $request): RedirectResponse
     {
         DB::beginTransaction();
 
         try {
-            $this->service->storeGuestUser($request);
+            $this->service->storeAttempt($request);
 
             DB::commit();
 
-            return redirect()->route('leaderboard', ['guest_user' => $this->service->getGuestUser()->id]);
+            return redirect()->route('leaderboard', ['attempt' => $this->service->getAttempt()->id]);
 
         } catch (Throwable $th) {
             DB::rollBack();
@@ -50,10 +63,20 @@ class HomeController extends Controller
         }
     }
 
-    public function leaderboard(GuestUser $guestUser = null): Response
+    /**
+     * Show leaderboard
+     *
+     * @param Attempt|null $attempt
+     * @return Response
+     */
+    public function leaderboard(Attempt $attempt = null): Response
     {
+        if ($attempt) {
+            $attempt->load('guestUser');
+        }
+
         return Inertia::render('Leaderboard', [
-            'guestUser' => fn () => $guestUser,
+            'attempt' => fn () => $attempt,
             'topScorers' => fn () => $this->service->getTopScorers()
         ]);
     }

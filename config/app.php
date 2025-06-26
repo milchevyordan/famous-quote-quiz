@@ -99,7 +99,7 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'number_of_questions' => env('NUMBER_OF_QUESTIONS', 10),
+    'number_of_questions' => env('NUMBER_OF_QUESTIONS', 3),
 
     'time_for_quiz_in_minutes' => env('TIME_FOR_QUIZ_IN_MINUTES', 1),
 

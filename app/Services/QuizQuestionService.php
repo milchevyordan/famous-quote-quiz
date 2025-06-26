@@ -11,7 +11,7 @@ use App\Services\DataTable\DataTable;
 class QuizQuestionService
 {
     /**
-     * Context product.
+     * Context model.
      *
      * @var QuizQuestion
      */

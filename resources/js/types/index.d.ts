@@ -81,18 +81,25 @@ export interface QuizQuestionForm extends Form, FormMethod {
 
 }
 
-interface QuizAnswer {
+export interface QuizAnswer {
     id: number;
     answer: string;
     is_correct: boolean;
 }
 
-interface GuestUser {
+export interface GuestUser {
     id: number;
     name: string;
     last_name: string;
     email: string;
+    attempts?: Attempt[];
+}
+
+export interface Attempt {
+    id: number;
+    guest_user_id: number;
     total_score: number;
     total_number_of_unanswered_questions: number;
     time_taken_seconds: number;
+    guest_user?: GuestUser;
 }

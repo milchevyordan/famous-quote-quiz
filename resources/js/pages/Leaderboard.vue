@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { GuestUser } from '@/types';
+import { Attempt } from '@/types';
 import GuestAppLayout from '@/layouts/GuestAppLayout.vue';
 
 defineProps<{
-    guestUser?: GuestUser;
-    topScorers: GuestUser[];
+    attempt?: Attempt;
+    topScorers: Attempt[];
 }>();
 </script>
 
 <template>
     <Head title="Welcome" />
+
     <GuestAppLayout>
         <!-- Leaderboard Section -->
         <div
@@ -18,7 +19,7 @@ defineProps<{
         >
             <!-- Guest User Score -->
             <div
-                v-if="guestUser"
+                v-if="attempt"
                 class="mb-8 rounded-2xl border border-indigo-300 bg-indigo-50 p-6 text-sm text-indigo-900 shadow-sm dark:border-indigo-500 dark:bg-indigo-950 dark:text-indigo-200"
             >
                 <div class="mb-2 flex items-center gap-2">
@@ -29,30 +30,31 @@ defineProps<{
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Name</p>
-                        <p class="font-semibold">{{ guestUser.name }} {{ guestUser.last_name }}</p>
+                        <p class="font-semibold">{{ attempt.guest_user?.name }} {{ attempt.guest_user?.last_name }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Email</p>
-                        <p>{{ guestUser.email }}</p>
+                        <p>{{ attempt.guest_user?.email }}</p>
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Total Score</p>
-                        <p class="font-semibold">{{ guestUser.total_score }}%</p>
+                        <p class="font-semibold">{{ attempt.total_score }}%</p>
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Time Used</p>
-                        <p>{{ guestUser.time_taken_seconds }} seconds</p>
+                        <p>{{ attempt.time_taken_seconds }} seconds</p>
                     </div>
                 </div>
 
-                <div class="pt-3">
-                    <Link
-                        class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
-                        :href="route('home', guestUser.id)"
-                    >
-                        Restart
-                    </Link>
-                </div>
+<!--                <div class="pt-3">-->
+<!--                    <Link-->
+<!--                        class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"-->
+<!--                        :href="route('home', guest_user.id)"-->
+<!--                    >-->
+<!--                        Restart-->
+<!--                    </Link>-->
+<!--                </div>-->
+                restart
             </div>
 
             <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">🏆 Leaderboard</h2>
@@ -70,17 +72,17 @@ defineProps<{
                 </thead>
                 <tbody>
                 <tr
-                    v-for="(guestUser, index) in topScorers"
-                    :key="guestUser.id"
+                    v-for="(attemptItem, index) in topScorers"
+                    :key="attemptItem.id"
                     class="border-b border-gray-100 even:bg-gray-50 dark:border-gray-800 dark:even:bg-[#1a1a1a] hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
                 >
                     <td class="px-4 py-3 text-gray-500 dark:text-gray-400">{{ index + 1 }}</td>
                     <td class="px-4 py-3 font-medium text-indigo-600 dark:text-indigo-400">
-                        {{ guestUser.name }} {{ guestUser.last_name }}
+                        {{ attemptItem.guest_user?.name }} {{ attemptItem.guest_user?.last_name }}
                     </td>
-                    <td class="px-4 py-3">{{ guestUser.email }}</td>
-                    <td class="px-4 py-3">{{ guestUser.total_score }}%</td>
-                    <td class="px-4 py-3">{{ guestUser.time_taken_seconds }} seconds</td>
+                    <td class="px-4 py-3">{{ attemptItem.guest_user?.email }}</td>
+                    <td class="px-4 py-3">{{ attemptItem.total_score }}%</td>
+                    <td class="px-4 py-3">{{ attemptItem.time_taken_seconds }} seconds</td>
                 </tr>
                 </tbody>
             </table>
