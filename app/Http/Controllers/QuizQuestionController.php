@@ -66,34 +66,40 @@ class QuizQuestionController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(QuizQuestion $quizQuestion)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(QuizQuestion $quizQuestion)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateQuizQuestionRequest $request, QuizQuestion $quizQuestion)
+    public function update(UpdateQuizQuestionRequest $request, QuizQuestion $question): RedirectResponse
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $this->service->setQuizQuestion($question)->updateQuizQuestion($request);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Record successfully created.');
+        } catch (Throwable $th) {
+            DB::rollBack();
+
+            Log::error($th->getMessage(), ['exception' => $th]);
+
+            return redirect()->back()->withErrors(['Error creating record.']);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(QuizQuestion $quizQuestion)
+    public function destroy(QuizQuestion $question): RedirectResponse
     {
-        //
+        try {
+            $question->delete();
+
+            return redirect()->back()->with('success', 'The record has been successfully deleted.');
+        } catch (Throwable $th) {
+            Log::error($th->getMessage(), ['exception' => $th]);
+
+            return redirect()->back()->withErrors(['Error deleting record.']);
+        }
     }
 }

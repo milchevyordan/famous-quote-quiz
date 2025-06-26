@@ -121,6 +121,12 @@ class AttemptService
         return ($correct / config('app.number_of_questions')) * 100;
     }
 
+    /**
+     * Update or create new guest user and return the attempt
+     *
+     * @param float $score
+     * @return Attempt
+     */
     private function storeOrUpdateGuestUser(float $score): Attempt
     {
         $validatedRequest = $this->getValidatedRequest();

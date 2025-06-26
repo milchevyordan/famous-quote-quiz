@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Requests\StoreQuizQuestionRequest;
+use App\Http\Requests\UpdateQuizQuestionRequest;
 use App\Models\QuizQuestion;
 use App\Services\DataTable\DataTable;
 
@@ -68,7 +69,7 @@ class QuizQuestionService
     }
 
     /**
-     * Create the client.
+     * Create the quiz question.
      *
      * @param StoreQuizQuestionRequest $request
      * @return self
@@ -83,6 +84,29 @@ class QuizQuestionService
         $quizQuestion->save();
 
         if (!$validatedRequest['is_binary']) {
+            $quizQuestion->answers()->createMany($validatedRequest['answers']);
+        }
+
+        $this->setQuizQuestion($quizQuestion);
+
+        return $this;
+    }
+
+    /**
+     * Update the quiz question.
+     *
+     * @param UpdateQuizQuestionRequest $request
+     * @return self
+     */
+    public function updateQuizQuestion(UpdateQuizQuestionRequest $request): self
+    {
+        $validatedRequest = $request->validated();
+
+        $quizQuestion = $this->getQuizQuestion();
+        $quizQuestion->update($validatedRequest);
+
+        if (!$validatedRequest['is_binary']) {
+            $quizQuestion->answers()->delete();
             $quizQuestion->answers()->createMany($validatedRequest['answers']);
         }
 
