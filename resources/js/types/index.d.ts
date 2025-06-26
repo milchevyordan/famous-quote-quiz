@@ -85,3 +85,13 @@ interface QuizAnswer {
     answer: string;
     is_correct: boolean;
 }
+
+interface GuestUser {
+    id: number;
+    name: string;
+    last_name: string;
+    email: string;
+    total_score: number;
+    total_number_of_unanswered_questions: number;
+    time_taken_seconds: number;
+}

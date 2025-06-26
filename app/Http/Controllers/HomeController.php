@@ -37,7 +37,7 @@ class HomeController extends Controller
 
             DB::commit();
 
-            return redirect()->route('show.score', ['guest_user' => $this->service->getGuestUser()->id])->with('success', 'Record successfully created.');
+            return redirect()->route('leaderboard', ['guest_user' => $this->service->getGuestUser()->id])->with('success', 'Record successfully created.');
 
         } catch (Throwable $th) {
             DB::rollBack();
@@ -46,5 +46,12 @@ class HomeController extends Controller
 
             return redirect()->back()->withErrors(['Error creating record.']);
         }
+    }
+
+    public function leaderboard()
+    {
+        return Inertia::render('Leaderboard', [
+            'topScorers' => $this->service->getTopScorers()
+        ]);
     }
 }

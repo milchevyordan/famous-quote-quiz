@@ -99,8 +99,8 @@ class GuestUserService
         return $this;
     }
 
-    public function showScore(GuestUser $guestUser)
+    public function getTopScorers()
     {
-        dd($guestUser);
+        return GuestUser::orderBy('total_score', 'desc')->orderBy('time_taken_seconds')->limit(10)->get();
     }
 }

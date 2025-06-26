@@ -7,7 +7,7 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/store', [HomeController::class, 'store'])->name('store');
-Route::get('/show-score/{guest_user}', [HomeController::class, 'showScore'])->name('show.score');
+Route::get('/leaderboard/{guest_user?}', [HomeController::class, 'leaderboard'])->name('leaderboard');
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
