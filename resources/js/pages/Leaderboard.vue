@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import { GuestUser } from '@/types';
 import GuestAppLayout from '@/layouts/GuestAppLayout.vue';
 
 defineProps<{
-    topScorers?: GuestUser[];
+    topScorers: GuestUser[];
+    guestUser?: GuestUser;
 }>();
-
-
 </script>
 
 <template>
@@ -17,8 +16,48 @@ defineProps<{
         <div
             class="flex-1 rounded-bl-lg rounded-br-lg bg-white p-6 pb-12 text-[13px] leading-[20px] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] lg:rounded-br-none lg:rounded-tl-lg lg:p-20 dark:bg-[#161615] dark:text-[#EDEDEC] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d]"
         >
+            <!-- Guest User Score -->
+            <div
+                v-if="guestUser"
+                class="mb-8 rounded-2xl border border-indigo-300 bg-indigo-50 p-6 text-sm text-indigo-900 shadow-sm dark:border-indigo-500 dark:bg-indigo-950 dark:text-indigo-200"
+            >
+                <div class="mb-2 flex items-center gap-2">
+                    <span class="text-xl">🎯</span>
+                    <h3 class="text-base font-semibold">Your Result</h3>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
+                    <div>
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Name</p>
+                        <p class="font-semibold">{{ guestUser.name }} {{ guestUser.last_name }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Email</p>
+                        <p>{{ guestUser.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Total Score</p>
+                        <p class="font-semibold">{{ guestUser.total_score }} / 10</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Time Used</p>
+                        <p>{{ guestUser.time_taken_seconds }} seconds</p>
+                    </div>
+                </div>
+
+                <div class="pt-3">
+                    <Link
+                        class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300"
+                        :href="route('home')"
+                    >
+                        Restart
+                    </Link>
+                </div>
+            </div>
+
             <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-100">🏆 Leaderboard</h2>
 
+            <!-- Leaderboard Table -->
             <table class="w-full table-auto border-collapse text-left text-sm">
                 <thead>
                 <tr class="border-b border-gray-300 bg-gray-100 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:border-gray-700 dark:bg-[#1f1f1f] dark:text-gray-300">
@@ -45,8 +84,7 @@ defineProps<{
                 </tr>
                 </tbody>
             </table>
-
         </div>
-
     </GuestAppLayout>
 </template>
+

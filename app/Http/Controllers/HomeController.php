@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAttemptRequest;
+use App\Models\GuestUser;
 use App\Services\GuestUserService;
 use App\Services\QuizService;
 use Illuminate\Http\RedirectResponse;
@@ -48,9 +49,10 @@ class HomeController extends Controller
         }
     }
 
-    public function leaderboard()
+    public function leaderboard(GuestUser $guestUser = null): Response
     {
         return Inertia::render('Leaderboard', [
+            'guestUser' => $guestUser,
             'topScorers' => $this->service->getTopScorers()
         ]);
     }
