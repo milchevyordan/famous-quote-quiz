@@ -12,14 +12,14 @@ defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Guest Users',
-        href: 'guest.user',
+        title: 'Leaderboard',
+        href: 'quiz.leaderboard',
     },
 ];
 </script>
 
 <template>
-    <Head :title="'Guest Users'" />
+    <Head :title="'Leaderboard'" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="py-12">
@@ -34,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             :global-search="true"
                             :advanced-filters="false"
                         >
-                            <template #cell(updated_at)="{ value, item }">
+                            <template #cell(created_at)="{ value, item }">
                                 {{ dateTimeToLocaleString(value) }}
                             </template>
                         </Table>

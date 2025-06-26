@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GuestUser;
+use App\Models\Attempt;
 use App\Services\DataTable\DataTable;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class GuestUserController extends Controller
+class AttemptController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,19 +15,20 @@ class GuestUserController extends Controller
     public function index(): Response
     {
         $dataTable = (new DataTable(
-            GuestUser::query()
+            Attempt::query()
         ))
+            ->setRelation('guestUser')
             ->setColumn('id', '#', true, true)
-            ->setColumn('name', 'Name', true, true)
-            ->setColumn('last_name', 'Last Name', true, true)
-            ->setColumn('email', 'Email', true, true)
+            ->setColumn('guestUser.name', 'Name', true, true)
+            ->setColumn('guestUser.last_name', 'Last Name', true, true)
+            ->setColumn('guestUser.email', 'Email', true, true)
             ->setColumn('total_score', 'Total Score', true, true)
             ->setColumn('total_number_of_unanswered_questions', 'Total Number Of Unanswered Questions', true, true)
             ->setColumn('time_taken_seconds', 'Time Taken Seconds', true, true)
-            ->setColumn('updated_at', 'Date', true, true)
-            ->setDateColumn('updated_at', 'dd.mm.YYYY H:i')
+            ->setColumn('created_at', 'Date', true, true)
+            ->setDateColumn('created_at', 'dd.mm.YYYY H:i')
             ->run();
 
-        return Inertia::render('guestUsers/Index', compact('dataTable'));
+        return Inertia::render('attempts/Index', compact('dataTable'));
     }
 }

@@ -20,8 +20,8 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Guest Users',
-        href: '/guest/user',
+        title: 'Leaderboard',
+        href: '/quiz/leaderboard',
         icon: LayoutGrid,
     },
 ];

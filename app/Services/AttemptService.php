@@ -136,7 +136,7 @@ class AttemptService
         $guestUser->save();
 
         $attempt = new Attempt([
-            'total_number_of_unanswered_questions' => count($validatedRequest['answers']),
+            'total_number_of_unanswered_questions' => config('app.number_of_questions') - count($validatedRequest['answers']),
             'time_taken_seconds' => $timeTaken,
             'total_score' => $score,
         ]);
