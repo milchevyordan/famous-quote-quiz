@@ -19,6 +19,11 @@ const mainNavItems: NavItem[] = [
         href: '/quiz/question',
         icon: LayoutGrid,
     },
+    {
+        title: 'Guest Users',
+        href: '/guest/user',
+        icon: LayoutGrid,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -41,7 +46,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('home')">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

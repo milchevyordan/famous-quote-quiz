@@ -9,7 +9,7 @@ import Table from "@/DataTable/Table.vue";
 import { DataTable } from "@/DataTable/types";
 import IconPencilSquare from "@/icons/PencilSquare.vue";
 import IconTrash from "@/icons/Trash.vue";
-import { type BreadcrumbItem, ChangeLog, QuizQuestionForm, User } from '@/types';
+import { type BreadcrumbItem, ChangeLog, QuizQuestion, QuizQuestionForm } from '@/types';
 import {dateTimeToLocaleString} from "@/utils";
 import AppLayout from "@/layouts/AppLayout.vue";
 import InputLabel from "@/components/InputLabel.vue";
@@ -18,7 +18,7 @@ import InputError from "@/components/InputError.vue";
 import RadioButtonToggle from '@/DataTable/Components/RadioButtonToggle.vue';
 
 defineProps<{
-    dataTable: DataTable<User>;
+    dataTable: DataTable<QuizQuestion>;
     changeLogsLimited: ChangeLog[];
     changeLogs?: DataTable<ChangeLog>;
 }>();
