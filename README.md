@@ -87,6 +87,12 @@ These instructions will help you get a copy of the project up and running on you
    php artisan serve
    ```
 
+## Admin Credentials
+
+Use the following credentials to log in as an admin:
+
+- **Email:** test@example.com
+- **Password:** 123456789
 ---
 
 ## Usage
