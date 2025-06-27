@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => Hash::make('123456789'),
         ]);
+        $this->call(QuizQuestionsTableSeeder::class);
+        $this->call(QuizAnswersTableSeeder::class);
     }
 }

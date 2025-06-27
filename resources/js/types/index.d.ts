@@ -86,4 +86,5 @@ export interface Attempt {
     total_number_of_unanswered_questions: number;
     time_taken_seconds: number;
     guest_user?: GuestUser;
+    created_at?: Date;
 }

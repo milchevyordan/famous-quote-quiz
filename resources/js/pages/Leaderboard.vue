@@ -2,11 +2,19 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { Attempt } from '@/types';
 import GuestAppLayout from '@/layouts/GuestAppLayout.vue';
+import { dateTimeToLocaleString } from '@/utils';
 
 defineProps<{
     attempt?: Attempt;
     topScorers: Attempt[];
 }>();
+
+function formatSecondsToHHMMSS(seconds: number) {
+    const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
+}
 </script>
 
 <template>
@@ -42,7 +50,7 @@ defineProps<{
                     </div>
                     <div>
                         <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Time Used</p>
-                        <p>{{ attempt.time_taken_seconds }} seconds</p>
+                        <p>{{ formatSecondsToHHMMSS(attempt.time_taken_seconds) }}</p>
                     </div>
                 </div>
 
@@ -67,6 +75,7 @@ defineProps<{
                     <th class="px-4 py-3">Email</th>
                     <th class="px-4 py-3">Total Score</th>
                     <th class="px-4 py-3">Time Used</th>
+                    <th class="px-4 py-3">Submit Date</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -81,7 +90,8 @@ defineProps<{
                     </td>
                     <td class="px-4 py-3">{{ attemptItem.guest_user?.email }}</td>
                     <td class="px-4 py-3">{{ attemptItem.total_score }}%</td>
-                    <td class="px-4 py-3">{{ attemptItem.time_taken_seconds }} seconds</td>
+                    <td class="px-4 py-3">{{ formatSecondsToHHMMSS(attemptItem.time_taken_seconds) }}</td>
+                    <td class="px-4 py-3">{{ dateTimeToLocaleString(attemptItem.created_at) }}</td>
                 </tr>
                 </tbody>
             </table>

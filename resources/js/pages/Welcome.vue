@@ -203,6 +203,7 @@ const countdown = ref<typeof VueCountdown>(null!);
                             class="h-4 w-4 accent-indigo-600"
                             :name="`answers_${question.id}`"
                             v-model="form.answers[question.id]"
+                            :disabled="form.answers[question.id] && (form.answers[question.id] != 1)"
                             value="1"
                         />
                         Yes
@@ -216,6 +217,7 @@ const countdown = ref<typeof VueCountdown>(null!);
                             class="h-4 w-4 accent-indigo-600"
                             :name="`answers_${question.id}`"
                             v-model="form.answers[question.id]"
+                            :disabled="form.answers[question.id] && (form.answers[question.id] != 0)"
                             value="0"
                         />
                         No
@@ -235,6 +237,7 @@ const countdown = ref<typeof VueCountdown>(null!);
                             :name="`answers_${question.id}`"
                             v-model="form.answers[question.id]"
                             :value="answer.id"
+                            :disabled="form.answers[question.id] && (form.answers[question.id] !== answer.id)"
                         />
                         {{ answer.answer }}
                     </label>
