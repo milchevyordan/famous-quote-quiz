@@ -72,7 +72,7 @@ These instructions will help you get a copy of the project up and running on you
 
    ```sql
    -- in phpMyAdmin or MySQL CLI
-   source famous-quiz-laravel/famous-quiz-laravel.sql;
+   source famous-quote-quiz/famous-quiz-laravel.sql;
    ```
 
    **Option 2: Run migrations and seeders**
